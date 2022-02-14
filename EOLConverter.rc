@@ -1,0 +1,30 @@
+id ICON "EOLConverter.ico"
+
+//GLFW_ICON ICON "EOLConverter.ico"
+
+1 VERSIONINFO
+FILEVERSION     1,1,0,0
+PRODUCTVERSION  1,1,0,0
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+	//BLOCK "080904E4" 	// English UK
+    BLOCK "040904E4"	// English US
+    BEGIN
+	  //VALUE "CompanyName", "***"
+      VALUE "FileDescription", "EOLConverter"
+      VALUE "FileVersion", "1.1.0"
+      //VALUE "InternalName", "dBtoRaz app"
+      VALUE "LegalCopyright", "(c) 2022 Avoubic"
+      VALUE "OriginalFilename", "EOLConverter.exe"
+      //VALUE "ProductName", "***"
+      //VALUE "ProductVersion", "4.0.0"
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+	   VALUE "Translation", 0x809, 1252	// English UK
+    //VALUE "Translation", 0x409, 1252	// English US
+    //VALUE "Translation", 0x0419, 1200 // Russian RU
+  END
+END
