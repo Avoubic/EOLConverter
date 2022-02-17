@@ -1,6 +1,6 @@
 //
 // EOLConverter.c
-// 2022.02.14 Avoubic
+// 2022.02.17 Avoubic
 //
 
 #include <ctype.h>
@@ -13,7 +13,7 @@
 #include <getopt.h>
 
 void printVersion() {
-	printf("EOLConverter 1.1.0\n");
+	printf("EOLConverter 1.2.0\n");
 	exit(0);
 }
 void printHelp() {

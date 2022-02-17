@@ -3,8 +3,8 @@ id ICON "EOLConverter.ico"
 //GLFW_ICON ICON "EOLConverter.ico"
 
 1 VERSIONINFO
-FILEVERSION     1,1,0,0
-PRODUCTVERSION  1,1,0,0
+FILEVERSION     1,2,0,0
+PRODUCTVERSION  1,2,0,0
 BEGIN
   BLOCK "StringFileInfo"
   BEGIN
@@ -13,7 +13,7 @@ BEGIN
     BEGIN
 	  //VALUE "CompanyName", "***"
       VALUE "FileDescription", "EOLConverter"
-      VALUE "FileVersion", "1.1.0"
+      VALUE "FileVersion", "1.2.0"
       //VALUE "InternalName", "dBtoRaz app"
       VALUE "LegalCopyright", "(c) 2022 Avoubic"
       VALUE "OriginalFilename", "EOLConverter.exe"
