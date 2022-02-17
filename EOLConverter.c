@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <getopt.h>
 
 void printVersion() {
 	printf("EOLConverter 1.1.0\n");
@@ -19,14 +20,23 @@ void printHelp() {
 	printf("Usage: EOLConverter [options] file...\n");
 	printf("Options:\n");
 	printf("  -c <to>\tConvert to:\n");
-	printf("    toCR\tMac end line\n");
-	printf("    toLF\tUnix end line\n");
-	printf("    toCRLF\tWindows end line\n");
+	printf("    Mac\t\tMac End Of Line\n");
+	printf("    Unx\t\tUnix End Of Line\n");
+	printf("    Win\t\tWindows End Of Line\n");
 	printf("  -h\t\tDisplay this information.\n");
 	printf("  -i\t\tDisplay file information.\n");
 	printf("  -v\t\tDisplay version information.\n");
 	printVersion();
 }
+
+static const struct option long_options[] =
+{
+  {"convert",     required_argument, 0, 'c'},
+  {"information", no_argument,       0, 'i'},
+  {"version",     no_argument,       0, 'v'},
+  {"help",        no_argument,       0, 'h'},
+  {0, no_argument, 0, 0}
+};
 
 int main(int argc, char* const argv[]) {
 
@@ -37,21 +47,31 @@ int main(int argc, char* const argv[]) {
 	bool ShowInfo    = false;
 	bool ShowVersion = false;
 	bool CR = false, LF = false, CRLF = false;
+	char *toEOL;
 
 	int rez = 0;
-
+/* getopt_long stores the option index here. */
+      int option_index = 0;
 //	opterr = 0;
-	while ( (rez = getopt(argc, argv, "-:c:hiv")) != -1){
+//	getopt_long (argc, argv, "abc:d:f:", long_options, &option_index);
+//	while ( (rez = getopt(argc, argv, "-:c:hiv")) != -1){
+	while ( (rez = getopt_long (argc, argv, "c:hiv",
+								 long_options, &option_index)) != -1){
 		switch (rez) {
-			case 'c': toEndLine = optind -1; break;
+//			case 'c': toEndLine = optind-1; break;
+			case 'c': toEOL = optarg; break;
 			case 'h': ShowHelp = true; break;
 			case 'i': ShowInfo = true; break;
 			case 'v': ShowVersion = true; break;
 			case ':': printf("option needs a value\n"); break;
 			// case '?': printf ("Unknown option character `\\x%x'.\n", optopt); break;
-			case 1: if (FileName < 0) FileName = optind -1;	break;
+//			case 1: if (FileName < 0) FileName = optind -1;	break;
 		}
 	}
+  if (optind < argc)
+  {
+		FileName = optind;
+  }
 	if (ShowHelp) printHelp();
 	if (ShowVersion) printVersion();
 
@@ -82,28 +102,36 @@ int main(int argc, char* const argv[]) {
 		}
 	}
 
-	if ( CR && !LF && !CRLF) printf("File Mac end line (CR)\n");
-	if (!CR &&  LF && !CRLF) printf("File Unix end line (LF)\n");
-	if (!CR && !LF &&  CRLF) printf("File Windows end line (CRLF)\n");
+	printf("Current file is ");
+	if ( CR && !LF && !CRLF) printf("MacOS EOL (CR)\n");
+	if (!CR &&  LF && !CRLF) printf("Unix EOL (LF)\n");
+	if (!CR && !LF &&  CRLF) printf("Windows EOL (CRLF)\n");
+//===============================
+
+// Вывод длины файла
+//	fseek(in, 0, SEEK_END);
+	printf("File long: %ld\n",  ftell(in));
+//=========================================
 
 	if (ShowInfo) {
 		fclose(in);
 		exit(0);
 	}
 
-	// Сброс на начало фала
-	fseek(in, SEEK_SET, 0);
+// Сброс на начало файла
+	// fseek(in, 0, SEEK_SET);
+	rewind(in);
 // ============================
 
-	if (toEndLine < 0) {
-		printf ("toEndLine indefined\n");
+	if (toEOL == NULL) {
+		printf ("To EOL indefined\n");
 		printHelp();
 //		exit(1);
 	}
 
 	// Приведение к нижнему регистру
-	for (size_t i = 0; i < strlen(argv[toEndLine]); ++i) {
-        argv[toEndLine][i] = tolower(argv[toEndLine][i]);
+	for (size_t i = 0; i < strlen(toEOL); ++i) {
+        toEOL[i] = tolower(toEOL[i]);
     }
 
 	FILE *out = fopen(argv[FileName],"rb+");
@@ -116,7 +144,7 @@ int main(int argc, char* const argv[]) {
 //	rewind(out);
 
 // Выполнение замены конца строк
-	if (strncmp(argv[toEndLine], "tocr", 4) == 0 && strncmp(argv[toEndLine], "tocrlf", 6) != 0) {
+	if (strcmp (toEOL, "mac") == 0) {
 		if (CR) {
 			//printf("File is CR Charset\n");
 		}
@@ -145,7 +173,9 @@ int main(int argc, char* const argv[]) {
 			printf("No 'newline'  in text\n");
 		}
 	}
-	else if (strncmp(argv[toEndLine], "tolf", 4) == 0) {
+	
+//	else if (strncmp(argv[toEndLine], "tolf", 4) == 0) {
+	else if (strcmp (toEOL, "unx") == 0) {
 		if (CR) {
 			while ((c = fgetc(in)) != EOF) {
 				if (c != 13) {
@@ -174,7 +204,7 @@ int main(int argc, char* const argv[]) {
 			printf("No 'newline'  in text\n");
 		}
 	}
-	else if (strncmp(argv[toEndLine], "tocrlf", 6) == 0) {
+	else if (strcmp (toEOL, "win") == 0) {
 		if (CR) {
 			while ((c = fgetc(in)) != EOF) {
 				if (c != 13) {
@@ -207,22 +237,22 @@ int main(int argc, char* const argv[]) {
 			//printf("File is CRLF Charset\n");
 		}
 		else {
-			printf("No 'newline'  in text\n");
+			printf("No 'EOL' in text\n");
 		}
 	}
 	else {
-		for (size_t i = 0; i <= strlen(argv[toEndLine]); ++i) {
-	        printf("%d ", argv[toEndLine][i]);
+		for (size_t i = 0; i <= strlen(toEOL); ++i) {
+	        printf("%d ", toEOL[i]);
 	    }
 	    printf("\n");
-		printf("Error toEndLine\n");
+		printf("Error %s\n", toEOL);
 	}
 //=============================
 
 	fclose(in);
 	// Подрезка файла
 	if (Change) {
-		printf("Change %s is OK\n", argv[toEndLine]);
+		printf("Convert to %s is OK\n", toEOL);
 		ftruncate(fileno(out), i);
 		printf("Number of character: %d\n", i);
 	}
