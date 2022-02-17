@@ -4,24 +4,25 @@
 //
 
 #include <ctype.h>
-#include <errno.h>
+#include <getopt.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <getopt.h>
+//#include <errno.h>
+#include "EOLConverter.h"
 
 void printVersion() {
-	printf("EOLConverter 1.2.0\n");
+	printf("%s %s.%s.%s\n", PROJECT_NAME, PROJECT_VER_MAJOR, PROJECT_VER_MINOR, PTOJECT_VER_PATCH);
 	exit(0);
 }
 void printHelp() {
-	printf("Usage: EOLConverter [options] file...\n");
+	printf("Usage: %s [options] file...\n", PROJECT_NAME);
 	printf("Options:\n");
 	printf("  -c <to>\tConvert to:\n");
 	printf("    Mac\t\tMac End Of Line\n");
-	printf("    Unx\t\tUnix End Of Line\n");
+	printf("    Unix\t\tUnix End Of Line\n");
 	printf("    Win\t\tWindows End Of Line\n");
 	printf("  -h\t\tDisplay this information.\n");
 	printf("  -i\t\tDisplay file information.\n");
@@ -41,7 +42,6 @@ static const struct option long_options[] =
 int main(int argc, char* const argv[]) {
 
 	int  FileName    = -1;
-	int  toEndLine   = -1;
 	bool Change      = false;
 	bool ShowHelp    = false;
 	bool ShowInfo    = false;
@@ -51,20 +51,17 @@ int main(int argc, char* const argv[]) {
 
 	int rez = 0;
 /* getopt_long stores the option index here. */
-      int option_index = 0;
+	int option_index = 0;
 //	opterr = 0;
-//	getopt_long (argc, argv, "abc:d:f:", long_options, &option_index);
-//	while ( (rez = getopt(argc, argv, "-:c:hiv")) != -1){
 	while ( (rez = getopt_long (argc, argv, "c:hiv",
 								 long_options, &option_index)) != -1){
 		switch (rez) {
-//			case 'c': toEndLine = optind-1; break;
 			case 'c': toEOL = optarg; break;
 			case 'h': ShowHelp = true; break;
 			case 'i': ShowInfo = true; break;
 			case 'v': ShowVersion = true; break;
 			case ':': printf("option needs a value\n"); break;
-			// case '?': printf ("Unknown option character `\\x%x'.\n", optopt); break;
+			case '?': printf ("Unknown option character `\\x%x'.\n", optopt); break;
 //			case 1: if (FileName < 0) FileName = optind -1;	break;
 		}
 	}
@@ -102,15 +99,13 @@ int main(int argc, char* const argv[]) {
 		}
 	}
 
-	printf("Current file is ");
-	if ( CR && !LF && !CRLF) printf("MacOS EOL (CR)\n");
-	if (!CR &&  LF && !CRLF) printf("Unix EOL (LF)\n");
-	if (!CR && !LF &&  CRLF) printf("Windows EOL (CRLF)\n");
+	printf("Current file is %s\n", CR?"MacOS EOL (CR)":(LF?"Unix EOL (LF)":"Windows EOL (CRLF)"));
+
 //===============================
 
 // Вывод длины файла
 //	fseek(in, 0, SEEK_END);
-	printf("File long: %ld\n",  ftell(in));
+	printf("Length of file: %ld\n",  ftell(in));
 //=========================================
 
 	if (ShowInfo) {
@@ -141,8 +136,6 @@ int main(int argc, char* const argv[]) {
 		exit(2);
 	}
 
-//	rewind(out);
-
 // Выполнение замены конца строк
 	if (strcmp (toEOL, "mac") == 0) {
 		if (CR) {
@@ -170,12 +163,11 @@ int main(int argc, char* const argv[]) {
 			Change = true;
 		}
 		else {
-			printf("No 'newline'  in text\n");
+			printf("No EOL in text\n");
 		}
 	}
 	
-//	else if (strncmp(argv[toEndLine], "tolf", 4) == 0) {
-	else if (strcmp (toEOL, "unx") == 0) {
+	else if (strcmp (toEOL, "unix") == 0) {
 		if (CR) {
 			while ((c = fgetc(in)) != EOF) {
 				if (c != 13) {
@@ -201,7 +193,7 @@ int main(int argc, char* const argv[]) {
 			Change = true;
 		}
 		else {
-			printf("No 'newline'  in text\n");
+			printf("No EOL in text\n");
 		}
 	}
 	else if (strcmp (toEOL, "win") == 0) {
@@ -253,8 +245,9 @@ int main(int argc, char* const argv[]) {
 	// Подрезка файла
 	if (Change) {
 		printf("Convert to %s is OK\n", toEOL);
+//		printf("Convert to %s is OK\n", CR?"MacOS EOL":(LF?"Unix EOL":"Windows EOL"));
 		ftruncate(fileno(out), i);
-		printf("Number of character: %d\n", i);
+		printf("Length of file: %d\n", i);
 	}
 
 	fclose(out);
