@@ -14,7 +14,7 @@
 #include "EOLConverter.h"
 
 void printVersion() {
-	printf("%s %s.%s.%s\n", PROJECT_NAME, PROJECT_VER_MAJOR, PROJECT_VER_MINOR, PTOJECT_VER_PATCH);
+	printf("%s %d.%d.%d\n", PROJECT_NAME, PROJECT_VER_MAJOR, PROJECT_VER_MINOR, PTOJECT_VER_PATCH);
 	exit(0);
 }
 void printHelp() {
