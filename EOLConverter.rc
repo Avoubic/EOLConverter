@@ -1,9 +1,10 @@
-#include <winver.h>
-#include "EOLConverter.h"
+#define RC_RESOURCE
+//#include <winver.h>
+#include "EOLConverter.c"
 id ICON "EOLConverter.ico"
 
 //GLFW_ICON ICON "EOLConverter.ico"
-VS_VERSION_INFO   VERSIONINFO
+1 VERSIONINFO
   FILEVERSION     PROJECT_VER_MAJOR,PROJECT_VER_MINOR,PTOJECT_VER_PATCH,0
   PRODUCTVERSION  PROJECT_VER_MAJOR,PROJECT_VER_MINOR,PTOJECT_VER_PATCH,0
 BEGIN
@@ -14,7 +15,7 @@ BEGIN
     BEGIN
 	  //VALUE "CompanyName", "***"
       VALUE "FileDescription", PROJECT_NAME
-      VALUE "FileVersion", "1.2.0"
+//      VALUE "FileVersion", "1.2.0"
       //VALUE "InternalName", "dBtoRaz app"
       VALUE "LegalCopyright", "(c) 2022 Avoubic"
       VALUE "OriginalFilename", "EOLConverter.exe"

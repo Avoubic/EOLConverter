@@ -1,7 +1,15 @@
 //
 // EOLConverter.c
-// 2022.02.17 Avoubic
+// 2022.02.18 Avoubic
+// https://github.com/Avoubic/EOLConverter.git
 //
+
+#define PROJECT_NAME "EOLConverter"
+#define PROJECT_VER_MAJOR 1
+#define PROJECT_VER_MINOR 2
+#define PTOJECT_VER_PATCH 0
+
+#ifndef RC_RESOURCE
 
 #include <ctype.h>
 #include <getopt.h>
@@ -11,7 +19,6 @@
 #include <string.h>
 #include <unistd.h>
 //#include <errno.h>
-#include "EOLConverter.h"
 
 void printVersion() {
 	printf("%s %d.%d.%d\n", PROJECT_NAME, PROJECT_VER_MAJOR, PROJECT_VER_MINOR, PTOJECT_VER_PATCH);
@@ -253,6 +260,7 @@ int main(int argc, char* const argv[]) {
 	fclose(out);
 	return 0;
 }
+#endif
 
 
 /*
